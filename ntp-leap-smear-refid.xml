@@ -271,7 +271,7 @@
 	of 0xFFFE so the proposed "I-Do" exchange can report whether or not
 	this server will offer leap smeared time in response to CLIENT time
 	requests, identifying the amount of correction using the above
-	REFID</t>
+	REFID.</t>
     </section>
 
     <section anchor="Security" title="Security Considerations">
