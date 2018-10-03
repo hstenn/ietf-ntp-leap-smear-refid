@@ -84,7 +84,7 @@
 
 <!-- other authors -->
 
-    <date month="March" year="2016"/>
+    <date year="2018"/>
 
     <!-- If the month and year are both specified and are the current ones,
          xml2rfc will fill in the current day for you. If only the current
@@ -114,49 +114,64 @@
          keywords will be used for the search engine. -->
 
     <abstract>
-      <t><xref target="RFC5905">RFC 5905</xref> and earlier versions of NTP
-      are the overwhelming method of distributing time on networks.  Leap
-      Seconds will continue to exist for a good number of years' time, and
-      since the timescale mandated by POSIX effectively ignores any
-      instances where there are not 86,400 seconds' time in a day, something
-      must be done to reliably synchronize clocks during the application of
-      leap second corrections.  One mechanism for dealing with the
-      application that has recently become visible is to apply the leap
-      second using a "smear", where the time reported by leap-second aware
-      servers is gradually adjusted so there is no major disruption to time
-      synchronization when processing a leap second.</t>
-      <t>While leap second processing can be expected to be properly
-      handled by up-to-date software and by time servers, there are large
-      numbers of out-of-date software installations and client systems that
-      are just not able to properly handle a leap second correction.</t>
-      <t>This proposal offers a way for a system to generate a REFID that
-      indicates that the time being supplied in the NTP packet already
-      contains an amount of leap smear correction, and what that amount
-      is.</t>
+      <t>
+	Leap Seconds are part of UTC.  NTP timestamps are based on POSIX
+	timestamps, which require each day to have exactly 86,400 seconds
+	per day.  Some applications and environments choose to "smear" leap
+	second corrections over a period that can last up to 24 hours' time,
+	and implement NTP servers that offer smeared time to clients asking
+	them for the time.
+      </t>
+
+      <t>Both NTP clients and operators have no current way to tell if an
+	NTP server is offering leap-smeared time or not.  This is a problem.
+      </t>
+
+      <t>
+	This proposal offers a mechanism by which clients (and operators)
+	can trivially detect a server that is offering leap-smeared time.
+      </t>
     </abstract>
   </front>
 
   <middle>
     <section title="Introduction">
-      <t><xref target="RFC5905">RFC 5905</xref> and earlier versions of NTP
-      are the overwhelming method of distributing time on networks.  Leap
-      Seconds will continue to exist for a good number of years' time, and
-      since the timescale mandated by POSIX effectively ignores any
-      instances where there are not 86,400 seconds' time in a day, something
-      must be done to reliably synchronize clocks during the application of
-      leap second corrections.  One mechanism for dealing with the
-      application that has recently become visible is to apply the leap
-      second using a "smear", where the time reported by leap-second aware
-      servers is gradually adjusted so there is no major disruption to time
-      synchronization when processing a leap second.</t>
-      <t>While leap second processing can be expected to be properly
-      handled by up-to-date software and by time servers, there are large
-      numbers of out-of-date software installations and client systems that
-      are just not able to properly handle a leap second correction.</t>
+      <t>
+	Leap Seconds are applied as needed to UTC in order to keep its time
+	of day close to UT1's mean solar time.
+      </t>
+
+      <t>
+	<xref target="RFC5905">RFC 5905</xref> and earlier versions of NTP
+	are the overwhelming method of distributing time on networks.  The
+	timescale used by NTP is based on POSIX which, for better or worse,
+	ignores any instances where there are not 86,400 seconds per day.
+      </t>
+
+      <t>
+	Leap Seconds will continue to exist for the foreseeable future, and
+	similarly, POSIX can be expected to ignore leap seconds for the
+	foreseeable future.
+      </t>.
+
+      <t>
+	Different applications have different requirements for the stability
+	of time during the application of a leap second.  Some applications
+	are tolerant of a fast application of the correction, while other
+	applications prefer to "smear" the leap second over a longer period,
+	where the time reported by leap-second aware servers is gradually
+	applied so there is no major disruption to time synchronization
+	during the processing a leap second.</t>
+
+      <t>While leap second processing can be expected to be properly handled
+	by up-to-date software and by time servers, there are large numbers
+	of out-of-date software installations and client systems that are
+	just not able to properly handle a leap second correction.</t>
+
       <t>This proposal offers a way for a system to generate a REFID that
-      indicates that the time being supplied in the NTP packet already
-      contains an amount of leap smear correction, and what that amount
-      is.</t>
+	indicates that the time being supplied in the NTP packet already
+	contains an amount of leap smear correction, and what that amount
+	is.</t>
 
       <section title="Requirements Language">
         <t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
@@ -203,18 +218,21 @@
       00:00 for a [-.5,0) correction range.  This also means we need a
       signed value to represent the amount of correction.</t>
 
-      <t>The REFID of a system that is supplying smeared time to client
-      requests while leap-smear correction is active would be 254.b1.b2.b3,
-      where the three octets (b1, b2, and b3) are a 2:22 formatted value,
-      yielding precision to 238 nanoseconds, or about a quarter of a
-      microsecond.</t>
+      <t>If a system implements the leap-smear REFID, the REFID of a system
+      that is supplying smeared time to client requests while leap-smear
+      correction is active would be 254.b1.b2.b3, where the three octets
+      (b1, b2, and b3) are a 2:22 formatted value, yielding precision to 238
+      nanoseconds, or about a quarter of a microsecond.</t>
 
       <t>Note that if an NTP server decides to offer smeared time
       corrections to clients, it SHOULD only offer this time in response to
-      CLIENT time requests.  An NTP server that is offering smeared time
-      SHOULD NOT send smeared time in any peer exchanges.  Also, CLIENT
-      machines SHOULD not be distributing time (smeared or otherwise) to
-      other systems.</t>
+      CLIENT time requests.  There is something to be said for further only
+      offering smeared time to CLIENT time requests that show an LI value of
+      0, and perhaps 3.  The reason for this is that if a client knows a
+      leap second is pending, it can be expected to know how to process that
+      leap second.  An NTP server that is offering smeared time SHOULD NOT
+      send smeared time in any peer exchanges.  Also, CLIENT machines SHOULD
+      not be distributing time (smeared or otherwise) to other systems.</t>
 
       <t>We also note that during the application of a leap smear, the REFID
       from a system offering smeared time cannot provide detection of a
@@ -230,29 +248,31 @@
       <t>This proposal is not an attempt to justify servers offering leap
       smeared time.  It is only an attempt to make it easy and visible to
       identify when a client is receiving smeared time, and provide the
-      client to know the amount of smear correction as of the latest
+      client a way to know the amount of smear correction as of the latest
       successful poll.</t>
     </section>
 
+<!--
     <section title="Questions">
-      <t>Should we ask IANA to allocate a pseudo Extension Field Type of
-      0xFFFE (for example) so the proposed "I-Do" exchange can report
-      whether or not this server will offer leap smeared time in response to
-      CLIENT time requests, identifying the amount of correction using the
-      above REFID?</t>
     </section>
+-->
 
+<!--
     <section anchor="Acknowledgements" title="Acknowledgements">
-      <t>The author wishes to acknowledge Dan Mahoney (and perhaps others)
-      for suggesting the idea of using an "impossible" first-octet value to
-      indicate an IPv6 refid hash.  The author wishes to acknowledge the
-      contributions of Joey Saccadonuts.</t>
+      <t>The author wishes to acknowledge the contributions of Joey
+      Saccadonuts.</t>
     </section>
+-->
 
     <!-- Possibly a 'Contributors' section ... -->
 
     <section anchor="IANA" title="IANA Considerations">
-      <t>This memo makes no requests of IANA.</t>
+      <t>This memo requests that IANA allocate a pseudo Extension Field Type
+      of 0xFFFE so the proposed "I-Do" exchange can report whether or not
+      this server will offer leap smeared time in response to CLIENT time
+      requests, identifying the amount of correction using the above
+      REFID</t>
+</t>
     </section>
 
     <section anchor="Security" title="Security Considerations">
