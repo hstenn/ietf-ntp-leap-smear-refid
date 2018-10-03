@@ -246,10 +246,10 @@
 	for that sample.</t>
 
       <t>This proposal is not an attempt to justify servers offering leap
-	smeared time.  It is only an attempt to make it easy and visible to
-	identify when a client is receiving smeared time, and provide the
-	client a way to know the amount of smear correction as of the latest
-	successful poll.</t>
+	smeared time.  Its purpose is to make it easy to identify when a
+	client is receiving smeared time, and provide the client a way to
+	know the amount of smear correction as of the latest successful
+	poll.</t>
     </section>
 
     <!--
