@@ -160,8 +160,8 @@
 	are tolerant of a fast application of the correction, while other
 	applications prefer to "smear" the leap second over a longer period,
 	where the time reported by leap-second aware servers is gradually
-	applied so there is no major disruption to time synchronization
-	during the processing a leap second.</t>
+	applied so there is no abrupt change to time during the processing
+	of a leap second.</t>
 
       <t>While leap second processing can be expected to be properly handled
 	by up-to-date software and by time servers, there are large numbers
