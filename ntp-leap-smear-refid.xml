@@ -152,7 +152,7 @@
 	Leap Seconds will continue to exist for the foreseeable future, and
 	similarly, POSIX can be expected to ignore leap seconds for the
 	foreseeable future.
-      </t>.
+      </t>
 
       <t>
 	Different applications have different requirements for the stability
