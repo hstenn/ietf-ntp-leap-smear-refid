@@ -319,7 +319,7 @@
     <section anchor="IANA" title="IANA Considerations">
       <t>
 	This memo requests that IANA allocate a pseudo Extension Field
-	Type of 0xFFFE so the proposed "I-Do" exchange can report
+	Type of 0xFEFF so the proposed "I-Do" exchange can report
 	whether or not this server can offer leap smeared time in
 	response to CLIENT time requests, identifying the amount of
 	correction using the above REFID.
